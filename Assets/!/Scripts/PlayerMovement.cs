@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
 {
     private CharacterController _characterController;
     private PlayerInput _playerInput;
+    private Animator _animator;
 
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
@@ -24,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
@@ -57,5 +59,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Move the character
         _characterController.Move(_velocity * Time.deltaTime);
+        _animator.SetFloat("Speed", moveVelocity.magnitude);
+
     }
 }
