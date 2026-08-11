@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using TMPro;
 
 /// <summary>
 /// Handles inventory screen
@@ -9,9 +10,15 @@ public class InventoryScreenUI : MonoBehaviour
 {
     private CanvasGroup canvasGroup;
 
-    [SerializeField]
-    private ItemSlot[] itemSlots;
+    [Header("References")]
+    [SerializeField] private ItemSlot[] itemSlots;
+    [SerializeField] private TMP_Text itemName;
+    [SerializeField] private TMP_Text itemDescription;
+    [SerializeField] private Button useButton;
+    [SerializeField] private Button dropButton;
+    [SerializeField] private Transform dropSpot;
 
+    private ItemSlot selectedSlot;
     private bool isVisible = false;
 
     private void Awake()
@@ -70,10 +77,75 @@ public class InventoryScreenUI : MonoBehaviour
             else
                 itemSlots[i].Clear();
         }
+
+        DeselectSlots();
     }
 
     private void OnDestroy()
     {
         InventorySystem.instance.OnInventoryChanged -= RefreshItems;
+    }
+
+    public void DeselectSlots()
+    {
+        if (selectedSlot != null)
+        {
+            selectedSlot.GetComponent<Image>().color = Color.white;
+        }
+
+        itemName.text = "";
+        itemDescription.text = "";
+        useButton.interactable = false;
+        dropButton.interactable = false;
+    }
+
+    public void SetSelectedSlot(ItemSlot slot)
+    {
+        DeselectSlots();
+
+        if (slot == null)
+        {
+            selectedSlot = null;
+            return;
+        }
+
+        selectedSlot = slot;
+        slot.GetComponent<Image>().color = Color.yellow;
+
+        ItemData item = slot.GetItemData();
+
+        if (item != null)
+        {
+            itemName.text = slot.GetItemData().itemName;
+            itemDescription.text = slot.GetItemData().itemDescription;
+
+            useButton.interactable = item.usable;
+            dropButton.interactable = true;
+        }
+        else
+        {
+            DeselectSlots();
+        }
+    }
+
+    public void UseSelectedItem()
+    {
+        if (selectedSlot != null && selectedSlot.GetItemData() != null)
+        {
+            ItemData item = InventorySystem.instance.RemoveItem(selectedSlot.transform.GetSiblingIndex());
+            RefreshItems();
+
+            Debug.Log($"Using item: {selectedSlot.GetItemData().itemName}");
+        }
+    }
+
+    public void DropSelectedItem()
+    {
+        if (selectedSlot != null && selectedSlot.GetItemData() != null)
+        {
+            ItemData item = InventorySystem.instance.RemoveItem(selectedSlot.transform.GetSiblingIndex());
+            Instantiate(item.itemPrefab, dropSpot.position, dropSpot.rotation);
+            RefreshItems();
+        }
     }
 }

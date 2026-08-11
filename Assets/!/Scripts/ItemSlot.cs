@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerDownHandler
 {
     [SerializeField] GameObject iconPrefab;
     
@@ -32,13 +32,27 @@ public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
         Destroy(itemIcon);
     }
 
+    private void OnMouseDown()
+    {
+        
+    }
+
+    public ItemData GetItemData()
+    {
+        return _itemData;
+    }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if(eventData.delta.magnitude < 2f)
+        {
+            return;
+        }
+
         if (_itemData == null) return;
 
         itemIcon.transform.SetParent(transform.parent.transform.parent);
         itemIcon.transform.SetAsLastSibling();
-        
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -77,5 +91,14 @@ public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
         }
 
         return -1;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        InventoryScreenUI inventoryUI = FindFirstObjectByType<InventoryScreenUI>();
+        if (inventoryUI != null)
+        {
+            inventoryUI.SetSelectedSlot(this);
+        }
     }
 }

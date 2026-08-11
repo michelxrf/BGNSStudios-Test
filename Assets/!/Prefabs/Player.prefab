@@ -685,10 +685,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 805482066106715695}
-  - {fileID: 8087593848375965356}
   - {fileID: 7127987612409372589}
   - {fileID: 6168297867895536270}
   - {fileID: 4483710325227706385}
+  - {fileID: 8087593848375965356}
   m_Father: {fileID: 4616316843638430612}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -769,6 +769,11 @@ MonoBehaviour:
   - {fileID: 6149163681683287002}
   - {fileID: 8380268371924545459}
   - {fileID: 3319882154223510180}
+  itemName: {fileID: 0}
+  itemDescription: {fileID: 0}
+  useButton: {fileID: 0}
+  dropButton: {fileID: 0}
+  dropSpot: {fileID: 0}
 --- !u!1 &3815678140296006026
 GameObject:
   m_ObjectHideFlags: 0
