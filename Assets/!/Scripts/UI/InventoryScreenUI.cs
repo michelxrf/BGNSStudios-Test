@@ -8,28 +8,28 @@ using TMPro;
 /// </summary>
 public class InventoryScreenUI : MonoBehaviour
 {
-    private CanvasGroup canvasGroup;
-
     [Header("References")]
-    [SerializeField] private ItemSlot[] itemSlots;
-    [SerializeField] private TMP_Text itemName;
-    [SerializeField] private TMP_Text itemDescription;
-    [SerializeField] private Button useButton;
-    [SerializeField] private Button dropButton;
-    [SerializeField] private Transform dropSpot;
-    [SerializeField] private GameObject usedItemPopUpPrefab;
+    [SerializeField] private ItemSlot[] _itemSlots;
+    [SerializeField] private TMP_Text _itemName;
+    [SerializeField] private TMP_Text _itemDescription;
+    [SerializeField] private Button _useButton;
+    [SerializeField] private Button _dropButton;
+    [SerializeField] private Transform _dropSpot;
+    [SerializeField] private GameObject _usedItemPopUpPrefab;
+    [SerializeField] private GameObject _panel;
 
+    private CanvasGroup _canvasGroup;
     private ItemSlot _selectedSlot;
     private bool isVisible = false;
 
     private void Awake()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
+        _canvasGroup = GetComponent<CanvasGroup>();
     }
 
     private void Start()
     {
-        Hide();
+        Hide(true);
         InventorySystem.instance.OnInventoryChanged += RefreshItems;
     }
 
@@ -52,21 +52,43 @@ public class InventoryScreenUI : MonoBehaviour
         }
     }
 
-    public void Hide()
+    public void Hide(bool skipAnimation = false)
     {
-        canvasGroup.alpha = 0;
-        canvasGroup.blocksRaycasts = false;
-        canvasGroup.interactable = false;
+        if(!skipAnimation)
+        {
+            // popup effect
+            _panel.transform.localScale = Vector3.one;
+            LeanTween.alphaCanvas(_canvasGroup, 0f, 0.5f).setEase(LeanTweenType.easeInOutQuad);
+            LeanTween.scale(_panel, Vector3.zero, 0.5f).setEase(LeanTweenType.easeInOutQuad);
+        }
+        else
+        {
+            _canvasGroup.alpha = 0f;
+        }
+
+        _canvasGroup.blocksRaycasts = false;
+        _canvasGroup.interactable = false;
         isVisible = false;
         Cursor.lockState = CursorLockMode.Locked;
         InventorySystem.instance.ToggleInventory(false);
     }
 
-    private void Show()
+    private void Show(bool skipAnimation = false)
     {
-        canvasGroup.alpha = 1;
-        canvasGroup.blocksRaycasts = true;
-        canvasGroup.interactable = true;
+        if(!skipAnimation)
+        {
+            // popup effect
+            _panel.transform.localScale = Vector3.zero;
+            LeanTween.alphaCanvas(_canvasGroup, 1f, 0.5f).setEase(LeanTweenType.easeInOutQuad);
+            LeanTween.scale(_panel, Vector3.one, 0.5f).setEase(LeanTweenType.easeInOutQuad);
+        }
+        else
+        {
+            _canvasGroup.alpha = 1f;
+        }
+
+        _canvasGroup.blocksRaycasts = true;
+        _canvasGroup.interactable = true;
         isVisible = true;
         RefreshItems();
         Cursor.lockState = CursorLockMode.None;
@@ -75,12 +97,12 @@ public class InventoryScreenUI : MonoBehaviour
 
     public void RefreshItems()
     {
-        for (int i = 0; i < itemSlots.Length; i++)
+        for (int i = 0; i < _itemSlots.Length; i++)
         {
-            if(itemSlots[i] != null)
-                itemSlots[i].SetItem(InventorySystem.instance.GetItemByIndex(i));
+            if(_itemSlots[i] != null)
+                _itemSlots[i].SetItem(InventorySystem.instance.GetItemByIndex(i));
             else
-                itemSlots[i].Clear();
+                _itemSlots[i].Clear();
         }
 
         DeselectSlots();
@@ -99,10 +121,10 @@ public class InventoryScreenUI : MonoBehaviour
             _selectedSlot = null;
         }
 
-        itemName.text = "";
-        itemDescription.text = "Click an item to know more!";
-        useButton.interactable = false;
-        dropButton.interactable = false;
+        _itemName.text = "";
+        _itemDescription.text = "Click an item to know more!";
+        _useButton.interactable = false;
+        _dropButton.interactable = false;
     }
 
     public void SetSelectedSlot(ItemSlot slot)
@@ -122,11 +144,11 @@ public class InventoryScreenUI : MonoBehaviour
 
         if (item != null)
         {
-            itemName.text = slot.GetItemData().itemName;
-            itemDescription.text = slot.GetItemData().itemDescription;
+            _itemName.text = slot.GetItemData().itemName;
+            _itemDescription.text = slot.GetItemData().itemDescription;
 
-            useButton.interactable = item.usable;
-            dropButton.interactable = true;
+            _useButton.interactable = item.usable;
+            _dropButton.interactable = true;
         }
         else
         {
@@ -142,7 +164,7 @@ public class InventoryScreenUI : MonoBehaviour
             RefreshItems();
 
             // Instantiate and set it so it appears in front of all else
-            GameObject popup = Instantiate(usedItemPopUpPrefab);
+            GameObject popup = Instantiate(_usedItemPopUpPrefab);
             popup.transform.SetParent(transform.parent, false);
             popup.transform.SetAsLastSibling();
             popup.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
@@ -157,7 +179,7 @@ public class InventoryScreenUI : MonoBehaviour
         if (_selectedSlot != null && _selectedSlot.GetItemData() != null)
         {
             ItemData item = InventorySystem.instance.RemoveItem(_selectedSlot.transform.GetSiblingIndex());
-            Instantiate(item.itemPrefab, dropSpot.position, dropSpot.rotation);
+            Instantiate(item.itemPrefab, _dropSpot.position, _dropSpot.rotation);
             RefreshItems();
         }
     }

@@ -19,7 +19,7 @@ public class DialogueScreen : MonoBehaviour
     private void Start()
     {
         DialogueManager.instance.SetInteractionScreen(this);
-        Hide();
+        Hide(true);
     }
 
     /// <summary>
@@ -41,9 +41,20 @@ public class DialogueScreen : MonoBehaviour
         _canvasGroup.blocksRaycasts = true;
     }
 
-    public void Hide()
+    public void Hide(bool skipAnimation = false)
     {
-        _canvasGroup.alpha = 0f;
+        if(!skipAnimation)
+        {
+            // popup effect
+            transform.localScale = Vector3.one;
+            LeanTween.alphaCanvas(_canvasGroup, 0f, 0.5f).setEase(LeanTweenType.easeInOutQuad);
+            LeanTween.scale(gameObject, Vector3.zero, 0.5f).setEase(LeanTweenType.easeInOutQuad);
+        }
+        else
+        {
+            _canvasGroup.alpha = 0f;
+        }
+
         _canvasGroup.interactable = false;
         _canvasGroup.blocksRaycasts = false;
     }
