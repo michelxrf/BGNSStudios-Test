@@ -148,7 +148,7 @@ public class InventoryScreenUI : MonoBehaviour
             popup.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
 
             // initialize the popup with the item name and start fade
-            popup.GetComponent<ItemUsedPopup>().Show(item.itemName);
+            popup.GetComponent<ItemUsedPopup>().Show(item.displayName);
         }
     }
 

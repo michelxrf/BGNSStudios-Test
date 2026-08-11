@@ -9,6 +9,17 @@ public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
     
     GameObject itemIcon;
     private ItemData _itemData;
+    private AudioSource _audioSource;
+
+    private void Awake()
+    {
+        _audioSource = GetComponent<AudioSource>();
+    }
+
+    private void Start()
+    {
+        Deselect();
+    }
 
     public void SetItem(ItemData itemData)
     {
@@ -25,11 +36,6 @@ public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
         {
             Clear();
         }
-    }
-
-    private void Start()
-    {
-        Deselect();
     }
 
     public void Clear()
@@ -52,6 +58,7 @@ public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
 
         if (_itemData == null) return;
 
+        LeanTween.scale(itemIcon, Vector3.one * 1.2f, 0.1f).setEase(LeanTweenType.easeOutBack);
         itemIcon.transform.SetParent(transform.parent.transform.parent);
         itemIcon.transform.SetAsLastSibling();
     }
@@ -74,12 +81,16 @@ public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
             if (targetSlot != null && targetSlot != this)
             {
                 InventorySystem.instance.SwapItems(FindSlotIndex(this), FindSlotIndex(targetSlot));
+                Deselect();
+                itemIcon.transform.localScale = Vector3.one;
                 return;
             }
         }
 
         itemIcon.transform.SetParent(transform);
         itemIcon.transform.localPosition = Vector3.zero;
+        itemIcon.transform.localScale = Vector3.one;
+        Deselect();
     }
 
     public int FindSlotIndex(ItemSlot slot)
@@ -101,6 +112,7 @@ public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
         {
             inventoryUI.SetSelectedSlot(this);
         }
+        _audioSource.Play();
     }
 
     public void Select()
