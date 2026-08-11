@@ -13,8 +13,16 @@ public class PlayerLook : MonoBehaviour
     [SerializeField, Range(0f, 5f)] private float lookSensitivity = 0.5f;
     [SerializeField, Range(-90f, 90f)] private float lookClamp = 75f;
 
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
     void Update()
     {
+        // Prevent movement while in inventory
+        if (InventorySystem.instance.IsInventoryOpen) return;
+
         Vector2 lookInput = Mouse.current.delta.ReadValue();
 
         // Horizontal rotation

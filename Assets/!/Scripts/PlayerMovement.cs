@@ -24,7 +24,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
         _animator = GetComponentInChildren<Animator>();
     }
 
@@ -35,6 +34,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMovement()
     {
+        // Prevent movement while in inventory
+        if (InventorySystem.instance.IsInventoryOpen) return;
+
         // Get input from Move action
         Vector2 moveInput = _playerInput.actions["Move"].ReadValue<Vector2>();
 
@@ -60,6 +62,5 @@ public class PlayerMovement : MonoBehaviour
         // Move the character
         _characterController.Move(_velocity * Time.deltaTime);
         _animator.SetFloat("Speed", moveVelocity.magnitude);
-
     }
 }
