@@ -17,6 +17,7 @@ public class InventoryScreenUI : MonoBehaviour
     [SerializeField] private Transform _dropSpot;
     [SerializeField] private GameObject _usedItemPopUpPrefab;
     [SerializeField] private GameObject _panel;
+    [SerializeField] private GameObject _popupSpawnPoint;
 
     private CanvasGroup _canvasGroup;
     private ItemSlot _selectedSlot;
@@ -167,7 +168,7 @@ public class InventoryScreenUI : MonoBehaviour
             GameObject popup = Instantiate(_usedItemPopUpPrefab);
             popup.transform.SetParent(transform.parent, false);
             popup.transform.SetAsLastSibling();
-            popup.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+            popup.transform.position = _popupSpawnPoint.transform.position;
 
             // initialize the popup with the item name and start fade
             popup.GetComponent<ItemUsedPopup>().Show(item.displayName);

@@ -6,7 +6,11 @@ public class PauseScreenUi : MonoBehaviour
     [SerializeField] private GameObject _panel;
     
     private CanvasGroup _canvasGroup;
-
+    private void Awake()
+    {
+        _canvasGroup = GetComponent<CanvasGroup>();
+        Hide(true);
+    }
 
     public void Pause()
     {
@@ -20,11 +24,6 @@ public class PauseScreenUi : MonoBehaviour
         Hide();
     }
 
-    private void Awake()
-    {
-        _canvasGroup = GetComponent<CanvasGroup>();
-        Hide(true);
-    }
 
     private void Update()
     {
@@ -73,7 +72,6 @@ public class PauseScreenUi : MonoBehaviour
         {
             _canvasGroup.alpha = 0f;
         }
-        
 
         _canvasGroup.interactable = false;
         _canvasGroup.blocksRaycasts = false;

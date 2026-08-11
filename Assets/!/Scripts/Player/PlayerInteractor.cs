@@ -54,7 +54,7 @@ public class PlayerInteractor : MonoBehaviour
             if (npc != null && _playerInput.actions["Interact"].triggered)
             {
                 _interactionTip.SetActive(false);
-                npc.Talk();
+                npc.Talk(transform);
                 return;
             }
         }

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb5e779d9585c1a4e804ec8b69350b5f, type: 3}
   m_Name: Ghost
   m_EditorClassIdentifier: Assembly-CSharp::NpcDialogueData
-  npcName: 
-  npcText: 
-  npcVoice: {fileID: 0}
+  npcName: Ghost
+  npcText: This party is so lame. I expected more people.
+  npcVoice: {fileID: 8300000, guid: 526ce325875e13c45b98ec7b56c96347, type: 3}

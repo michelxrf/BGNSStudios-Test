@@ -17,14 +17,19 @@ public class NpcTalk : MonoBehaviour
         _animator = GetComponentInChildren<Animator>();
     }
 
-    public void Talk()
+    public void Talk(Transform playerTransform)
     {
-        if( _npcDialogueData != null )
+        if( _npcDialogueData == null )
         {
             Debug.LogWarning($"No dialogue data assigned to {gameObject.name}");
             return;
         }
-        
+
+        // Rotate toward player in y axis
+        Vector3 direction = (playerTransform.position - transform.position).normalized;
+        float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.up);
+
         // Show the dialogue screen with the NPC's dialogue data
         DialogueManager.instance.StartDialogue(_npcDialogueData, this);
 
@@ -35,7 +40,9 @@ public class NpcTalk : MonoBehaviour
         }
         
         // play talk anim
-        _animator.SetBool("Talk", true);
+        _animator.SetBool("IsTalking", true);
+
+
     }
 
     /// <summary>
@@ -43,6 +50,6 @@ public class NpcTalk : MonoBehaviour
     /// </summary>
     public void StopTalkingAnim()
     {
-        _animator.SetBool("Talk", true);
+        _animator.SetBool("IsTalking", false);
     }
 }
