@@ -35,7 +35,11 @@ public class InventoryScreenUI : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Tab))
+        // prevents opening inventory while paused or in dialogue
+        if (DialogueManager.instance.IsDialogueActive) return;
+        if (PauseManager.instance.IsPaused) return;
+
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             if(isVisible)
             {

@@ -26,6 +26,9 @@ public class PlayerLook : MonoBehaviour
         // prevent movement while paused
         if (PauseManager.instance.IsPaused) return;
 
+        // prevent movement while in dialogue
+        if (DialogueManager.instance.IsDialogueActive) return;
+
         Vector2 lookInput = Mouse.current.delta.ReadValue();
 
         // Horizontal rotation

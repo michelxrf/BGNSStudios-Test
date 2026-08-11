@@ -40,6 +40,9 @@ public class PlayerMovement : MonoBehaviour
         // prevent movement while paused
         if (PauseManager.instance.IsPaused) return;
 
+        // prevent movement while in dialogue
+        if(DialogueManager.instance.IsDialogueActive) return;
+
         // Get input from Move action
         Vector2 moveInput = _playerInput.actions["Move"].ReadValue<Vector2>();
 

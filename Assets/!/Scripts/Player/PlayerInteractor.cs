@@ -29,18 +29,33 @@ public class PlayerInteractor : MonoBehaviour
         // prevent movement while paused
         if (PauseManager.instance.IsPaused) return;
 
+        // prevent movement while in dialogue
+        if (DialogueManager.instance.IsDialogueActive) return;
+
         // Perform raycast from origin in forward direction
         Ray ray = new Ray(_origin.position, _origin.forward);
         bool hit = Physics.Raycast(ray, out RaycastHit hitInfo, _range);
 
-        if (hit && hitInfo.collider.TryGetComponent<CollectableObject>(out CollectableObject collectableObject))
+        CollectableObject collectableObject = hitInfo.collider?.GetComponent<CollectableObject>();
+        NpcTalk npc = hitInfo.collider?.GetComponent<NpcTalk>();
+
+        if (hit && (collectableObject != null || npc != null))
         {
             _interactionTip.SetActive(true);
 
             // Check for Interact action and call Interact
-            if (_playerInput.actions["Interact"].triggered)
+            if (collectableObject != null && _playerInput.actions["Interact"].triggered)
             {
+                _interactionTip.SetActive(false);
                 collectableObject.Interact();
+                return;
+            }
+
+            if (npc != null && _playerInput.actions["Interact"].triggered)
+            {
+                _interactionTip.SetActive(false);
+                npc.Talk();
+                return;
             }
         }
         else

@@ -57,7 +57,7 @@ public class InventorySystem : MonoBehaviour
             return;
         }
 
-        ItemData item = Resources.Load<ItemData>($"!/Data/{itemName}");
+        ItemData item = Resources.Load<ItemData>($"Data/Items/{itemName}");
         if (item == null)
         {
             item = Resources.Load<ItemData>(itemName);
