@@ -6,14 +6,13 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerMovement : MonoBehaviour
 {
-    private CharacterController _characterController;
-    private PlayerInput _playerInput;
-    private Animator _animator;
-
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float gravity = -9.81f;
 
+    private CharacterController _characterController;
+    private PlayerInput _playerInput;
+    private Animator _animator;
     private Vector3 _velocity;
 
     private void Awake()
@@ -27,11 +26,14 @@ public class PlayerMovement : MonoBehaviour
         _animator = GetComponentInChildren<Animator>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         HandleMovement();
     }
 
+    /// <summary>
+    /// Handles player movement
+    /// </summary>
     private void HandleMovement()
     {
         // Prevent movement while in inventory
@@ -67,6 +69,8 @@ public class PlayerMovement : MonoBehaviour
 
         // Move the character
         _characterController.Move(_velocity * Time.deltaTime);
+
+        // sets the animation
         _animator.SetFloat("Speed", moveVelocity.magnitude);
     }
 }

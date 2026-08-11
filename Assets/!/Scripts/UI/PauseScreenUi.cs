@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Handles the pause screen UI
+/// </summary>
 public class PauseScreenUi : MonoBehaviour
 {
     [Header("References")]
@@ -12,19 +15,28 @@ public class PauseScreenUi : MonoBehaviour
         Hide(true);
     }
 
+
+    /// <summary>
+    /// Pauses the game and shows the pause screen
+    /// </summary>
     public void Pause()
     {
         PauseManager.instance.PauseGame();
         Show();
     }
 
+    /// <summary>
+    /// Resumes the game and hides the pause screen
+    /// </summary>
     public void Resume()
     {
         PauseManager.instance.ResumeGame();
         Hide();
     }
 
-
+    /// <summary>
+    /// Listens for the pause input and toggles the pause screen
+    /// </summary>
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.F1)) {
@@ -39,6 +51,10 @@ public class PauseScreenUi : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Shows the pause screen
+    /// </summary>
+    /// <param name="skipAnimation">Use to skip the popup animations, for initial setup</param>
     private void Show(bool skipAnimation = false)
     {
         if(!skipAnimation)
@@ -51,14 +67,21 @@ public class PauseScreenUi : MonoBehaviour
         }
         else
         {
+            // just show the panel without any animations
             _canvasGroup.alpha = 1f;
         }
 
         _canvasGroup.interactable = true;
         _canvasGroup.blocksRaycasts = true;
+
+        // allow the cursor to move
         Cursor.lockState = CursorLockMode.None;
     }
 
+    /// <summary>
+    /// Hides the pause screen
+    /// </summary>
+    /// <param name="skipAnimation">Use to skip the popup animations, for initial setup</param>
     private void Hide(bool skipAnimation = false)
     {
         if(!skipAnimation)
@@ -70,14 +93,20 @@ public class PauseScreenUi : MonoBehaviour
         }
         else
         {
+            // just hide the panel without any animations
             _canvasGroup.alpha = 0f;
         }
 
         _canvasGroup.interactable = false;
         _canvasGroup.blocksRaycasts = false;
+
+        // lock the cursor to the center of the screen
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    /// <summary>
+    /// Quits the game
+    /// </summary>
     public void Quit()
     {
         Application.Quit();

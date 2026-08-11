@@ -1,5 +1,9 @@
 using UnityEngine;
 
+
+/// <summary>
+/// Handles game pause logic, mostly used so other components know when the game is running or not
+/// </summary>
 public class PauseManager : MonoBehaviour
 {
     public static PauseManager instance { get; private set; }

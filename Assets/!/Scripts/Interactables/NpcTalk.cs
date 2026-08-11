@@ -2,10 +2,11 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// allow the player to talk to an NPC
+/// Npc component that holds dialogue logic for the player to interact with
 /// </summary>
 public class NpcTalk : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private NpcDialogueData _npcDialogueData;
 
     private Animator _animator;
@@ -17,6 +18,10 @@ public class NpcTalk : MonoBehaviour
         _animator = GetComponentInChildren<Animator>();
     }
 
+    /// <summary>
+    /// Called by the player to init a dialogue with this npc character
+    /// </summary>
+    /// <param name="playerTransform"></param>
     public void Talk(Transform playerTransform)
     {
         if( _npcDialogueData == null )

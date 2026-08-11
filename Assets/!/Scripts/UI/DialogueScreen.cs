@@ -6,6 +6,7 @@ using UnityEngine;
 /// </summary>
 public class DialogueScreen : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private TMP_Text _npcNameText;
     [SerializeField] private TMP_Text _npcTextText;
     
@@ -18,7 +19,10 @@ public class DialogueScreen : MonoBehaviour
 
     private void Start()
     {
+        // initializes the Manager with the refs for this UI screen, so it can update it's content
         DialogueManager.instance.SetInteractionScreen(this);
+        
+        // Hides the screen skipping its animation
         Hide(true);
     }
 
@@ -41,6 +45,10 @@ public class DialogueScreen : MonoBehaviour
         _canvasGroup.blocksRaycasts = true;
     }
 
+    /// <summary>
+    /// Hides the screen
+    /// </summary>
+    /// <param name="skipAnimation"></param>
     public void Hide(bool skipAnimation = false)
     {
         if(!skipAnimation)

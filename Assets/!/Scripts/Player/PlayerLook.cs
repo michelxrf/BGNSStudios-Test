@@ -18,6 +18,9 @@ public class PlayerLook : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    /// <summary>
+    /// Handles the mouse look of the player
+    /// </summary>
     void Update()
     {
         // Prevent movement while in inventory

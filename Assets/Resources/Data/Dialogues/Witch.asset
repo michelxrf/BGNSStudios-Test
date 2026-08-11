@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NpcDialogueData
   npcName: Witch
   npcText: Hey there! Welcome to the party! Make yourself at home. If you need anything
-    just grab.
+    just grab. Not a lot of people have arrived, but more will come. I hope at least.
   npcVoice: {fileID: 8300000, guid: 526ce325875e13c45b98ec7b56c96347, type: 3}

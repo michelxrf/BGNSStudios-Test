@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
 
+/// <summary>
+/// Handles the logic of the inventory system and it's saving and loading of inventory data
+/// </summary>
 public class InventorySystem : MonoBehaviour
 {
     private const int INVENTORY_CAPACITY = 10;
     private const string INVENTORY_SAVE_KEY = "InventoryData";
     
-    public static InventorySystem instance;
+    public static InventorySystem instance {private set; get; }
 
     ItemData[] inventory = new ItemData[INVENTORY_CAPACITY];
 
@@ -19,6 +22,7 @@ public class InventorySystem : MonoBehaviour
 
     private void Awake()
     {
+        // set it up as a partial Singleton, no need to add it to Dont Destroy for we only have one game scene
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
@@ -78,6 +82,11 @@ public class InventorySystem : MonoBehaviour
         AddItem(item);
     }
 
+    /// <summary>
+    /// Add an item to the inventory from a item Scriptable Object
+    /// Add an item to the inventory from a item Scriptable Object
+    /// </summary>
+    /// <param name="itemData"></param>
     public void AddItem(ItemData itemData)
     {
         if (CountItems() >= INVENTORY_CAPACITY)
@@ -94,7 +103,7 @@ public class InventorySystem : MonoBehaviour
             }
         }
 
-        Debug.Log($"Item '{itemData.itemName}' was added to the inventory.");
+        // Saves the inventory at every item added
         SaveInventory();
         OnInventoryChanged?.Invoke();
     }
@@ -112,8 +121,12 @@ public class InventorySystem : MonoBehaviour
 
         ItemData removedItem = inventory[index];
         inventory[index] = null;
+
+        // saves to file every time something is removed
         SaveInventory();
         OnInventoryChanged?.Invoke();
+
+        // returns the item, its used for dropped and used items
         return removedItem;
     }
 
@@ -135,6 +148,7 @@ public class InventorySystem : MonoBehaviour
         return removedItem;
     }
 
+    // Removes an item by it's Scriptable Object
     public ItemData RemoveItem(ItemData itemData)
     {
         ItemData removedItem = null;
@@ -149,6 +163,11 @@ public class InventorySystem : MonoBehaviour
         return removedItem;
     }
 
+    /// <summary>
+    /// Swaps two items in the array, can handle null
+    /// </summary>
+    /// <param name="indexA"></param>
+    /// <param name="indexB"></param>
     public void SwapItems(int indexA, int indexB)
     {
         if (indexA < 0 || indexA >= INVENTORY_CAPACITY || indexB < 0 || indexB >= INVENTORY_CAPACITY)
@@ -157,6 +176,7 @@ public class InventorySystem : MonoBehaviour
             return;
         }
         
+        // holds the item in a temp var and then swaps
         ItemData temp = inventory[indexA];
         inventory[indexA] = inventory[indexB];
         inventory[indexB] = temp;
@@ -165,6 +185,11 @@ public class InventorySystem : MonoBehaviour
         OnInventoryChanged?.Invoke();
     }
 
+    /// <summary>
+    /// Finds and return an item by it's index pos
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
     public ItemData GetItemByIndex(int index)
     {
         return inventory[index];
@@ -243,6 +268,11 @@ public class InventorySystem : MonoBehaviour
         Debug.Log($"Inventory loaded with {CountItems()} items.");
     }
 
+    /// <summary>
+    /// Verify if an item is present in the inventory, could be used for checking for keys or quest items, not actually implemented
+    /// </summary>
+    /// <param name="itemName"></param>
+    /// <returns></returns>
     public bool HasItem(string itemName)
     {
         foreach (var item in inventory)
@@ -255,18 +285,28 @@ public class InventorySystem : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// tests for inventory capacity
+    /// </summary>
+    /// <returns></returns>
     public bool IsFull()
     {
         return CountItems() >= INVENTORY_CAPACITY;
     }
 
+    /// <summary>
+    /// Mostly used by player components to prevent movement while in menu
+    /// </summary>
+    /// <param name="newState"></param>
     public void ToggleInventory(bool newState)
     {
         isInventoryOpen = newState;
     }
 }
 
-
+/// <summary>
+/// Data structures to save the inventory
+/// </summary>
 [System.Serializable]
 public class InventorySlotData
 {

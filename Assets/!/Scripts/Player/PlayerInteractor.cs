@@ -36,14 +36,17 @@ public class PlayerInteractor : MonoBehaviour
         Ray ray = new Ray(_origin.position, _origin.forward);
         bool hit = Physics.Raycast(ray, out RaycastHit hitInfo, _range);
 
+        // Gets all npcs and items in front
         CollectableObject collectableObject = hitInfo.collider?.GetComponent<CollectableObject>();
         NpcTalk npc = hitInfo.collider?.GetComponent<NpcTalk>();
 
+        // ignore stuff that's not npc nor collectable object
         if (hit && (collectableObject != null || npc != null))
         {
+            // shows the onscreen hint
             _interactionTip.SetActive(true);
 
-            // Check for Interact action and call Interact
+            // handles interacting with collectable objects
             if (collectableObject != null && _playerInput.actions["Interact"].triggered)
             {
                 _interactionTip.SetActive(false);
@@ -51,6 +54,7 @@ public class PlayerInteractor : MonoBehaviour
                 return;
             }
 
+            // handles Npc interacitons
             if (npc != null && _playerInput.actions["Interact"].triggered)
             {
                 _interactionTip.SetActive(false);
@@ -60,6 +64,7 @@ public class PlayerInteractor : MonoBehaviour
         }
         else
         {
+            // disables tip when nothing of interest is intercted by the raycast
             _interactionTip.SetActive(false);
         }
     }
