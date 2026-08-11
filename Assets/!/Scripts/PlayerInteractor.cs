@@ -23,6 +23,12 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Update()
     {
+        /// Prevent movement while in inventory
+        if (InventorySystem.instance.IsInventoryOpen) return;
+
+        // prevent movement while paused
+        if (PauseManager.instance.IsPaused) return;
+
         // Perform raycast from origin in forward direction
         Ray ray = new Ray(_origin.position, _origin.forward);
         bool hit = Physics.Raycast(ray, out RaycastHit hitInfo, _range);

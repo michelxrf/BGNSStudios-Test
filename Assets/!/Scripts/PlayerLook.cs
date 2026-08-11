@@ -23,6 +23,9 @@ public class PlayerLook : MonoBehaviour
         // Prevent movement while in inventory
         if (InventorySystem.instance.IsInventoryOpen) return;
 
+        // prevent movement while paused
+        if (PauseManager.instance.IsPaused) return;
+
         Vector2 lookInput = Mouse.current.delta.ReadValue();
 
         // Horizontal rotation

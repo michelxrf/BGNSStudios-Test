@@ -6,6 +6,13 @@ public class CollectableObject : MonoBehaviour
 
     public void Interact()
     {
-        Debug.Log($"Interacted with {data.itemName}");
+        if(InventorySystem.instance.IsFull())
+        {
+            Debug.Log("Inventory is full. Cannot collect item.");
+            return;
+        }
+
+        InventorySystem.instance.AddItem(data);
+        Destroy(gameObject);
     }
 }

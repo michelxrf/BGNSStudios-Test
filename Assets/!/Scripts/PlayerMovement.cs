@@ -37,6 +37,9 @@ public class PlayerMovement : MonoBehaviour
         // Prevent movement while in inventory
         if (InventorySystem.instance.IsInventoryOpen) return;
 
+        // prevent movement while paused
+        if (PauseManager.instance.IsPaused) return;
+
         // Get input from Move action
         Vector2 moveInput = _playerInput.actions["Move"].ReadValue<Vector2>();
 

@@ -1,18 +1,21 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
+using UnityEngine.UI;
 
 public class InventorySystem : MonoBehaviour
 {
+    private const int INVENTORY_CAPACITY = 10;
+    private const string INVENTORY_SAVE_KEY = "InventoryData";
+    
     public static InventorySystem instance;
 
-    private const int INVENTORY_CAPACITY = 9;
-    private const string INVENTORY_SAVE_KEY = "InventoryData";
-
-    private List<ItemData> inventory = new List<ItemData>();
+    ItemData[] inventory = new ItemData[INVENTORY_CAPACITY];
 
     private bool isInventoryOpen = false;
-
     public bool IsInventoryOpen { get { return isInventoryOpen; } }
+
+    public Action OnInventoryChanged;
 
     private void Awake()
     {
@@ -23,7 +26,6 @@ public class InventorySystem : MonoBehaviour
         }
 
         instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -31,23 +33,17 @@ public class InventorySystem : MonoBehaviour
         LoadInventory();
     }
 
-    public List<ItemData> Inventory { get { return inventory; } }
-
     /// <summary>
-    /// Adds an item to the inventory by index of the ItemData
+    /// Counts the number of items in the inventory
     /// </summary>
-    public void AddItem(int index)
+    public int CountItems()
     {
-        if (inventory.Count >= INVENTORY_CAPACITY)
+        int count = 0;
+        foreach (var item in inventory)
         {
-            Debug.Log("Inventory is full. Cannot add item.");
-            return;
+            if (item != null) count++;
         }
-
-        // This assumes you have a reference to the item (you may need to adjust this)
-        // For now, this is a placeholder implementation
-        Debug.Log($"Item at index {index} was added to the inventory.");
-        SaveInventory();
+        return count;
     }
 
     /// <summary>
@@ -55,48 +51,123 @@ public class InventorySystem : MonoBehaviour
     /// </summary>
     public void AddItem(string itemName)
     {
-        if (inventory.Count >= INVENTORY_CAPACITY)
+        if (CountItems() >= INVENTORY_CAPACITY)
         {
             Debug.Log("Inventory is full. Cannot add item.");
             return;
         }
 
-        Debug.Log($"Item '{itemName}' was added to the inventory.");
+        ItemData item = Resources.Load<ItemData>($"!/Data/{itemName}");
+        if (item == null)
+        {
+            item = Resources.Load<ItemData>(itemName);
+        }
+
+        if (item == null)
+        {
+            ItemData[] allItems = Resources.LoadAll<ItemData>("");
+            item = System.Array.Find(allItems, i => i != null && i.itemName == itemName);
+        }
+
+        if (item == null)
+        {
+            Debug.Log($"Item '{itemName}' not found.");
+            return;
+        }
+
+        AddItem(item);
+    }
+
+    public void AddItem(ItemData itemData)
+    {
+        if (CountItems() >= INVENTORY_CAPACITY)
+        {
+            Debug.Log("Inventory is full. Cannot add item.");
+            return;
+        }
+        
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            if (inventory[i] == null) {
+                inventory[i] = itemData;
+                break;
+            }
+        }
+
+        Debug.Log($"Item '{itemData.itemName}' was added to the inventory.");
         SaveInventory();
+        OnInventoryChanged?.Invoke();
     }
 
     /// <summary>
     /// Removes an item from the inventory by index
     /// </summary>
-    public void RemoveItem(int index)
+    public ItemData RemoveItem(int index)
     {
-        if (index < 0 || index >= inventory.Count)
+        if (index < 0 || index >= INVENTORY_CAPACITY)
         {
-            Debug.Log($"Item at index {index} was not found in the inventory.");
-            return;
+            Debug.Log($"Bad index {index}.");
+            return null;
         }
 
-        inventory.RemoveAt(index);
-        Debug.Log($"Item at index {index} was removed from the inventory.");
+        ItemData removedItem = inventory[index];
+        inventory[index] = null;
         SaveInventory();
+        OnInventoryChanged?.Invoke();
+        return removedItem;
     }
 
     /// <summary>
     /// Removes an item from the inventory by item name
     /// </summary>
-    public void RemoveItem(string itemName)
+    public ItemData RemoveItem(string itemName)
     {
-        ItemData itemToRemove = inventory.Find(item => item.itemName == itemName);
-
-        if (itemToRemove == null)
+        ItemData removedItem = null;
+        for (int i = 0; i < inventory.Length; i++)
         {
-            Debug.Log($"Item '{itemName}' was not found in the inventory.");
-            return;
+            if (inventory[i] != null && inventory[i].itemName == itemName)
+            {
+                removedItem = RemoveItem(i);
+                break;
+            }
         }
 
-        inventory.Remove(itemToRemove);
-        Debug.Log($"Item '{itemName}' was removed from the inventory.");
+        return removedItem;
+    }
+
+    public ItemData RemoveItem(ItemData itemData)
+    {
+        ItemData removedItem = null;
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            if (inventory[i] == itemData)
+            {
+                removedItem = RemoveItem(i);
+                break;
+            }
+        }
+        return removedItem;
+    }
+
+    public void SwapItems(int indexA, int indexB)
+    {
+        if (indexA < 0 || indexA >= INVENTORY_CAPACITY || indexB < 0 || indexB >= INVENTORY_CAPACITY)
+        {
+            Debug.Log($"Bad indices {indexA}, {indexB}.");
+            return;
+        }
+        
+        ItemData temp = inventory[indexA];
+        inventory[indexA] = inventory[indexB];
+        inventory[indexB] = temp;
+        
         SaveInventory();
+        OnInventoryChanged?.Invoke();
+    }
+
+    public ItemData GetItemByIndex(int index)
+    {
+        return inventory[index];
     }
 
     /// <summary>
@@ -104,9 +175,24 @@ public class InventorySystem : MonoBehaviour
     /// </summary>
     private void SaveInventory()
     {
-        string json = JsonUtility.ToJson(new SerializableItemList(inventory));
+        InventorySaveData saveData = new InventorySaveData();
+
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            if (inventory[i] != null)
+            {
+                saveData.slots.Add(new InventorySlotData
+                {
+                    slotIndex = i,
+                    itemName = inventory[i].itemName
+                });
+            }
+        }
+
+        string json = JsonUtility.ToJson(saveData);
         PlayerPrefs.SetString(INVENTORY_SAVE_KEY, json);
         PlayerPrefs.Save();
+        Debug.Log($"Inventory saved with {saveData.slots.Count} items.");
     }
 
     /// <summary>
@@ -114,48 +200,82 @@ public class InventorySystem : MonoBehaviour
     /// </summary>
     private void LoadInventory()
     {
-        inventory.Clear();
-
         if (!PlayerPrefs.HasKey(INVENTORY_SAVE_KEY))
         {
             Debug.Log("No saved inventory found.");
             return;
         }
 
+        Array.Clear(inventory, 0, inventory.Length);
+
         string json = PlayerPrefs.GetString(INVENTORY_SAVE_KEY);
-        SerializableItemList savedList = JsonUtility.FromJson<SerializableItemList>(json);
+        InventorySaveData saveData = JsonUtility.FromJson<InventorySaveData>(json);
 
-        ItemData[] allItems = Resources.LoadAll<ItemData>("!");
-
-        foreach (string itemName in savedList.itemNames)
+        if (saveData != null && saveData.slots != null)
         {
-            ItemData item = System.Array.Find(allItems, i => i.itemName == itemName);
-            if (item != null)
+            ItemData[] allItems = Resources.LoadAll<ItemData>("");
+            Dictionary<string, ItemData> itemDict = new Dictionary<string, ItemData>();
+            foreach (var item in allItems)
             {
-                inventory.Add(item);
+                if (item != null && !string.IsNullOrEmpty(item.itemName) && !itemDict.ContainsKey(item.itemName))
+                {
+                    itemDict.Add(item.itemName, item);
+                }
+            }
+
+            foreach (var slot in saveData.slots)
+            {
+                if (slot.slotIndex >= 0 && slot.slotIndex < inventory.Length)
+                {
+                    if (itemDict.TryGetValue(slot.itemName, out ItemData itemData))
+                    {
+                        inventory[slot.slotIndex] = itemData;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"ItemData with itemName '{slot.itemName}' was not found in Resources.");
+                    }
+                }
             }
         }
 
-        Debug.Log($"Inventory loaded with {inventory.Count} items.");
+        OnInventoryChanged?.Invoke();
+        Debug.Log($"Inventory loaded with {CountItems()} items.");
+    }
+
+    public bool HasItem(string itemName)
+    {
+        foreach (var item in inventory)
+        {
+            if (item != null && item.itemName == itemName)
+            {   
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool IsFull()
+    {
+        return CountItems() >= INVENTORY_CAPACITY;
     }
 
     public void ToggleInventory(bool newState)
     {
         isInventoryOpen = newState;
-        Debug.Log($"Inventory is now {(isInventoryOpen ? "open" : "closed")}.");
     }
 }
 
-[System.Serializable]
-public class SerializableItemList
-{
-    public List<string> itemNames = new List<string>();
 
-    public SerializableItemList(List<ItemData> items)
-    {
-        foreach (ItemData item in items)
-        {
-            itemNames.Add(item.itemName);
-        }
-    }
+[System.Serializable]
+public class InventorySlotData
+{
+    public int slotIndex;
+    public string itemName;
+}
+
+[System.Serializable]
+public class InventorySaveData
+{
+    public List<InventorySlotData> slots = new List<InventorySlotData>();
 }

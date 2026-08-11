@@ -1,18 +1,81 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class ItemSlot : MonoBehaviour
+public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
+    [SerializeField] GameObject iconPrefab;
+    
+    GameObject itemIcon;
+    private ItemData _itemData;
+
     public void SetItem(ItemData itemData)
     {
-        // Set the item data for this slot
-        // You can update the UI elements (like icon, name, etc.) here based on the itemData
-        Debug.Log($"Item '{itemData.itemName}' set in the slot.");
+        Clear();
+        _itemData = itemData;
+
+        if(itemData != null )
+        {
+            GameObject newIcon = Instantiate(iconPrefab, transform);
+            newIcon.GetComponent<Image>().sprite = itemData.itemIcon;
+            itemIcon = newIcon;
+        }
+        else
+        {
+            Clear();
+        }
     }
 
     public void Clear()
     {
-        // Clear the item data for this slot
-        // You can reset the UI elements here
-        Debug.Log("Item slot cleared.");
+        _itemData = null;
+        Destroy(itemIcon);
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        if (_itemData == null) return;
+
+        itemIcon.transform.SetParent(transform.parent.transform.parent);
+        itemIcon.transform.SetAsLastSibling();
+        
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (_itemData == null) return;
+
+        itemIcon.transform.position = eventData.position;
+    }
+
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        RaycastResult raycastResult = eventData.pointerCurrentRaycast;
+
+        if (raycastResult.gameObject != null)
+        {
+            ItemSlot targetSlot = raycastResult.gameObject.GetComponent<ItemSlot>();
+            if (targetSlot != null && targetSlot != this)
+            {
+                InventorySystem.instance.SwapItems(FindSlotIndex(this), FindSlotIndex(targetSlot));
+                return;
+            }
+        }
+
+        itemIcon.transform.SetParent(transform);
+        itemIcon.transform.localPosition = Vector3.zero;
+    }
+
+    public int FindSlotIndex(ItemSlot slot)
+    {
+        ItemSlot[] children = transform.parent.GetComponentsInChildren<ItemSlot>();
+
+        for (int i = 0; i < transform.parent.childCount; i++)
+        {
+            if(children[i] == slot) return i;
+        }
+
+        return -1;
     }
 }

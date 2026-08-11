@@ -12,41 +12,31 @@ public class InventoryScreenUI : MonoBehaviour
     [SerializeField]
     private ItemSlot[] itemSlots;
 
-    private PlayerInput playerInput;
-    private InputAction inventoryAction;
     private bool isVisible = false;
 
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
-        playerInput = GetComponent<PlayerInput>();
     }
 
     private void Start()
     {
-        inventoryAction = playerInput.actions["Inventory"];
-        inventoryAction.performed += OnInventoryActionPerformed;
-
         Hide();
+        InventorySystem.instance.OnInventoryChanged += RefreshItems;
     }
 
-    private void OnDestroy()
+    private void Update()
     {
-        if (inventoryAction != null)
+        if(Input.GetKeyDown(KeyCode.Tab))
         {
-            inventoryAction.performed -= OnInventoryActionPerformed;
-        }
-    }
-
-    private void OnInventoryActionPerformed(InputAction.CallbackContext context)
-    {
-        if (isVisible)
-        {
-            Hide();
-        }
-        else
-        {
-            Show();
+            if(isVisible)
+            {
+                Hide();
+            }
+            else
+            {
+                Show();
+            }
         }
     }
 
@@ -71,20 +61,19 @@ public class InventoryScreenUI : MonoBehaviour
         InventorySystem.instance.ToggleInventory(true);
     }
 
-    private void RefreshItems()
+    public void RefreshItems()
     {
-        var inventory = InventorySystem.instance.Inventory;
-
         for (int i = 0; i < itemSlots.Length; i++)
         {
-            if (i < inventory.Count)
-            {
-                itemSlots[i].SetItem(inventory[i]);
-            }
+            if(itemSlots[i] != null)
+                itemSlots[i].SetItem(InventorySystem.instance.GetItemByIndex(i));
             else
-            {
                 itemSlots[i].Clear();
-            }
         }
+    }
+
+    private void OnDestroy()
+    {
+        InventorySystem.instance.OnInventoryChanged -= RefreshItems;
     }
 }
