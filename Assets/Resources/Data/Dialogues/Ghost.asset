@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NpcDialogueData
   npcName: Ghost
   npcText: This party is so lame. I expected more people. Hey! We're using the same
-    costume! Lame!
+    costume! Lame! You better go, nothing will happen here.
   npcVoice: {fileID: 8300000, guid: 526ce325875e13c45b98ec7b56c96347, type: 3}

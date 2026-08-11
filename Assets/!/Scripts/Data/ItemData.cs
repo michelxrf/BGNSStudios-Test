@@ -13,4 +13,6 @@ public class ItemData : ScriptableObject
     public Sprite itemIcon;
     public GameObject itemPrefab;
     public bool usable;
+    public AudioClip interactSfx;
+    public AudioClip useSFX;
 }

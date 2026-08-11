@@ -18,3 +18,5 @@ MonoBehaviour:
   itemIcon: {fileID: 21300000, guid: 888854a357ba38f4b81bab3d655ab310, type: 3}
   itemPrefab: {fileID: 1357883579927174276, guid: a763ab7b2a849b4459272f9f3af643f6, type: 3}
   usable: 1
+  interactSfx: {fileID: 8300000, guid: ab65828a993df4a45949b7b160fa23b5, type: 3}
+  useSFX: {fileID: 0}

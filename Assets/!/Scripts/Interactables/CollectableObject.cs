@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -6,7 +7,8 @@ using UnityEngine;
 public class CollectableObject : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private ItemData data;
+    [SerializeField] private ItemData _data;
+    [SerializeField] private GameObject _sfxPrefab;
 
     /// <summary>
     /// Called by the player to attempt to collect the item from the ground
@@ -20,7 +22,16 @@ public class CollectableObject : MonoBehaviour
         }
 
         // add the item to inventory system and destroy prefab
-        InventorySystem.instance.AddItem(data);
+        InventorySystem.instance.AddItem(_data);
+
+        // play the sfx
+        if(_data.interactSfx != null && _sfxPrefab != null)
+        {
+            GameObject newPrefab = Instantiate(_sfxPrefab, transform.position, Quaternion.identity);
+            newPrefab.GetComponent<AudioSource>().PlayOneShot(_data.interactSfx);
+            Destroy(newPrefab, _data.interactSfx.length);
+        }
+        
         Destroy(gameObject);
     }
 }

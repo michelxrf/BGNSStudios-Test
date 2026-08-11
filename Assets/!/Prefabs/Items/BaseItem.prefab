@@ -94,4 +94,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 270fce08731f8c84292f1ef360f172c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectableObject
-  data: {fileID: 0}
+  _data: {fileID: 0}
+  _sfxPrefab: {fileID: 7277487687559076683, guid: f18cedf0fdc682741a35de04effde789, type: 3}

@@ -18,6 +18,7 @@ public class InventoryScreenUI : MonoBehaviour
     [SerializeField] private GameObject _usedItemPopUpPrefab;
     [SerializeField] private GameObject _panel;
     [SerializeField] private GameObject _popupSpawnPoint;
+    [SerializeField] private GameObject _sfxPrefab;
 
     private CanvasGroup _canvasGroup;
     private ItemSlot _selectedSlot;
@@ -214,6 +215,14 @@ public class InventoryScreenUI : MonoBehaviour
             popup.transform.SetAsLastSibling();
             popup.transform.position = _popupSpawnPoint.transform.position;
 
+            // Play sfx
+            if(item.useSFX != null && _sfxPrefab != null)
+            {
+                GameObject newPrefab = Instantiate(_sfxPrefab, transform.position, Quaternion.identity);
+                newPrefab.GetComponent<AudioSource>().PlayOneShot(item.useSFX);
+                Destroy(newPrefab, item.useSFX.length);
+            }
+            
             // initialize the popup with the item name and start fade
             popup.GetComponent<ItemUsedPopup>().Show(item.displayName);
         }

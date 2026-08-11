@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NpcDialogueData
   npcName: Scarecrow
   npcText: What you think of my costume? It took me a while to make. I should've
-    gone to that other party, this one is dead.
+    gone to that other party, this one is dead. You should go too, there nothing
+    going on in this party. For real.
   npcVoice: {fileID: 8300000, guid: 0b57f4f5f551ca743b7f306a3713342c, type: 3}

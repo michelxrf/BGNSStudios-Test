@@ -126,7 +126,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 270fce08731f8c84292f1ef360f172c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectableObject
-  data: {fileID: 11400000, guid: 7bcaf8ae41c43154084868c9b6115430, type: 2}
+  _data: {fileID: 11400000, guid: 7bcaf8ae41c43154084868c9b6115430, type: 2}
+  _sfxPrefab: {fileID: 0}
 --- !u!54 &4347533749296005355
 Rigidbody:
   m_ObjectHideFlags: 0
