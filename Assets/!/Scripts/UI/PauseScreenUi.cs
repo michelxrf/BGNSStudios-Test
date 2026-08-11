@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 /// <summary>
 /// Handles the pause screen UI
@@ -7,7 +9,8 @@ public class PauseScreenUi : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject _panel;
-    
+    [SerializeField] private IntroFade _fader;
+
     private CanvasGroup _canvasGroup;
     private void Awake()
     {
@@ -109,7 +112,14 @@ public class PauseScreenUi : MonoBehaviour
     /// </summary>
     public void Quit()
     {
-        Application.Quit();
+        
+        StartCoroutine(TransitionToScene("MainMenu"));
     }
 
+    IEnumerator TransitionToScene(string sceneName)
+    {
+        _fader.FadeToBlack();
+        yield return new WaitForSeconds(_fader._fadeDuration);
+        SceneManager.LoadScene(sceneName);
+    }
 }
