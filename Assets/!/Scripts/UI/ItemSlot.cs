@@ -4,7 +4,8 @@ using UnityEngine.UI;
 
 public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerDownHandler
 {
-    [SerializeField] GameObject iconPrefab;
+    [SerializeField] GameObject _iconPrefab;
+    [SerializeField] GameObject _selectedHighlight;
     
     GameObject itemIcon;
     private ItemData _itemData;
@@ -16,7 +17,7 @@ public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
 
         if(itemData != null )
         {
-            GameObject newIcon = Instantiate(iconPrefab, transform);
+            GameObject newIcon = Instantiate(_iconPrefab, transform);
             newIcon.GetComponent<Image>().sprite = itemData.itemIcon;
             itemIcon = newIcon;
         }
@@ -26,15 +27,15 @@ public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
         }
     }
 
+    private void Start()
+    {
+        Deselect();
+    }
+
     public void Clear()
     {
         _itemData = null;
         Destroy(itemIcon);
-    }
-
-    private void OnMouseDown()
-    {
-        
     }
 
     public ItemData GetItemData()
@@ -100,5 +101,15 @@ public class ItemSlot : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
         {
             inventoryUI.SetSelectedSlot(this);
         }
+    }
+
+    public void Select()
+    {
+        _selectedHighlight.SetActive(true);
+    }
+
+    public void Deselect()
+    {
+        _selectedHighlight.SetActive(false);
     }
 }

@@ -19,7 +19,7 @@ public class InventoryScreenUI : MonoBehaviour
     [SerializeField] private Transform dropSpot;
     [SerializeField] private GameObject usedItemPopUpPrefab;
 
-    private ItemSlot selectedSlot;
+    private ItemSlot _selectedSlot;
     private bool isVisible = false;
 
     private void Awake()
@@ -93,13 +93,14 @@ public class InventoryScreenUI : MonoBehaviour
 
     public void DeselectSlots()
     {
-        if (selectedSlot != null)
+        if (_selectedSlot != null)
         {
-            selectedSlot.GetComponent<Image>().color = Color.white;
+            _selectedSlot.Deselect();
+            _selectedSlot = null;
         }
 
         itemName.text = "";
-        itemDescription.text = "";
+        itemDescription.text = "Click an item to know more!";
         useButton.interactable = false;
         dropButton.interactable = false;
     }
@@ -110,12 +111,12 @@ public class InventoryScreenUI : MonoBehaviour
 
         if (slot == null)
         {
-            selectedSlot = null;
+            _selectedSlot = null;
             return;
         }
 
-        selectedSlot = slot;
-        slot.GetComponent<Image>().color = Color.yellow;
+        _selectedSlot = slot;
+        _selectedSlot.Select();
 
         ItemData item = slot.GetItemData();
 
@@ -135,9 +136,9 @@ public class InventoryScreenUI : MonoBehaviour
 
     public void UseSelectedItem()
     {
-        if (selectedSlot != null && selectedSlot.GetItemData() != null)
+        if (_selectedSlot != null && _selectedSlot.GetItemData() != null)
         {
-            ItemData item = InventorySystem.instance.RemoveItem(selectedSlot.transform.GetSiblingIndex());
+            ItemData item = InventorySystem.instance.RemoveItem(_selectedSlot.transform.GetSiblingIndex());
             RefreshItems();
 
             // Instantiate and set it so it appears in front of all else
@@ -153,9 +154,9 @@ public class InventoryScreenUI : MonoBehaviour
 
     public void DropSelectedItem()
     {
-        if (selectedSlot != null && selectedSlot.GetItemData() != null)
+        if (_selectedSlot != null && _selectedSlot.GetItemData() != null)
         {
-            ItemData item = InventorySystem.instance.RemoveItem(selectedSlot.transform.GetSiblingIndex());
+            ItemData item = InventorySystem.instance.RemoveItem(_selectedSlot.transform.GetSiblingIndex());
             Instantiate(item.itemPrefab, dropSpot.position, dropSpot.rotation);
             RefreshItems();
         }
