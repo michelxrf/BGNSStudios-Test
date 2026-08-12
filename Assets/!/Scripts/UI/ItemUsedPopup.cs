@@ -1,7 +1,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem.iOS;
 
 /// <summary>
 /// Simple script to fade an Ui popup and destroy itself afterwards

@@ -219,7 +219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8eb5383c0e6a2ad4380e4287c1930cd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  moveSpeed: 5
+  moveSpeed: 3
   gravity: -9.81
 --- !u!114 &5681830588616085419
 MonoBehaviour:
@@ -234,7 +234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLook
   _cameraTransform: {fileID: 1560023062040009678}
-  lookSensitivity: 0.5
+  lookSensitivity: 0.3
   lookClamp: 55
 --- !u!114 &6675032818081781453
 MonoBehaviour:
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   _origin: {fileID: 1560023062040009678}
   _interactionTip: {fileID: 0}
-  _range: 5
+  _range: 3
 --- !u!143 &7035763344070188386
 CharacterController:
   m_ObjectHideFlags: 0

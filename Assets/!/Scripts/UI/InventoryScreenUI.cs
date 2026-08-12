@@ -56,6 +56,11 @@ public class InventoryScreenUI : MonoBehaviour
                 Show();
             }
         }
+
+        if(_isVisible && Input.GetKeyDown(KeyCode.Escape))
+        {
+            Hide();
+        }
     }
 
     /// <summary>

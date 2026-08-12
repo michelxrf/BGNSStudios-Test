@@ -15,52 +15,21 @@ public class PauseScreenUi : MonoBehaviour
     private void Awake()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
-        Hide(true);
+    }
+
+    private void Start()
+    {
+        Resume(true);
     }
 
 
     /// <summary>
     /// Pauses the game and shows the pause screen
     /// </summary>
-    public void Pause()
+    public void Pause(bool skipAnimation = false)
     {
         PauseManager.instance.PauseGame();
-        Show();
-    }
-
-    /// <summary>
-    /// Resumes the game and hides the pause screen
-    /// </summary>
-    public void Resume()
-    {
-        PauseManager.instance.ResumeGame();
-        Hide();
-    }
-
-    /// <summary>
-    /// Listens for the pause input and toggles the pause screen
-    /// </summary>
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.F1)) {
-            if(PauseManager.instance.IsPaused)
-            {
-                Resume();
-            } 
-            else
-            { 
-                Pause();
-            }
-        }
-    }
-
-    /// <summary>
-    /// Shows the pause screen
-    /// </summary>
-    /// <param name="skipAnimation">Use to skip the popup animations, for initial setup</param>
-    private void Show(bool skipAnimation = false)
-    {
-        if(!skipAnimation)
+        if (!skipAnimation)
         {
             // popup effect
             _panel.transform.localScale = Vector3.zero;
@@ -82,12 +51,12 @@ public class PauseScreenUi : MonoBehaviour
     }
 
     /// <summary>
-    /// Hides the pause screen
+    /// Resumes the game and hides the pause screen
     /// </summary>
-    /// <param name="skipAnimation">Use to skip the popup animations, for initial setup</param>
-    private void Hide(bool skipAnimation = false)
+    public void Resume(bool skipAnimation = false)
     {
-        if(!skipAnimation)
+        PauseManager.instance.ResumeGame();
+        if (!skipAnimation)
         {
             // popup effect
             _panel.transform.localScale = Vector3.one;
@@ -105,6 +74,28 @@ public class PauseScreenUi : MonoBehaviour
 
         // lock the cursor to the center of the screen
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    /// <summary>
+    /// Listens for the pause input and toggles the pause screen
+    /// </summary>
+    private void Update()
+    {
+        if (InventorySystem.instance.IsInventoryOpen) return;
+        if(DialogueManager.instance.IsDialogueActive) return;
+
+        // F1 in case we need a WebGL build
+        if (Input.GetKeyDown(KeyCode.F1) || Input.GetKeyDown(KeyCode.Escape)) 
+        {
+            if(PauseManager.instance.IsPaused)
+            {
+                Resume();
+            } 
+            else
+            { 
+                Pause();
+            }
+        }
     }
 
     /// <summary>

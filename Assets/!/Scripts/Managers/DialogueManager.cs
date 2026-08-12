@@ -1,5 +1,3 @@
-using System;
-using Unity.AppUI.UI;
 using UnityEngine;
 
 /// <summary>
@@ -22,19 +20,6 @@ public class DialogueManager : MonoBehaviour
         }
         
         instance = this;
-    }
-
-
-    private void Update()
-    {
-        // Prevent dialogue closing while the game is paused
-        if (PauseManager.instance.IsPaused) return;
-
-        // Check for input to close the dialogue screen
-        if (IsDialogueActive && Input.GetKeyDown(KeyCode.Space))
-        {
-            EndDialogue();
-        }
     }
 
     public void SetInteractionScreen(DialogueScreen dialogScreen)

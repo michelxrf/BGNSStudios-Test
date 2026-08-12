@@ -26,6 +26,21 @@ public class DialogueScreen : MonoBehaviour
         Hide(true);
     }
 
+    private void Update()
+    {
+        if (PauseManager.instance.IsPaused) return;
+        if (InventorySystem.instance.IsInventoryOpen) return;
+
+        if (DialogueManager.instance.IsDialogueActive)
+        { 
+            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Space)
+                || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return))
+            {
+                DialogueManager.instance.EndDialogue();
+            }
+        }
+    }
+
     /// <summary>
     /// Show the screen and init the text fields with the given NPC data
     /// </summary>
